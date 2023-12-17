@@ -20,41 +20,40 @@ import javax.sql.DataSource;
 /**
  * Created by EI on 11/12/2023
  */
-@EnableJpaRepositories(basePackages = "guruspringframework.sdjpamultidb.repositories.pan",entityManagerFactoryRef = "panEntityManagerFactory", transactionManagerRef = "panTransactionManager")
-
+@EnableJpaRepositories(basePackages = "guruspringframework.sdjpamultidb.repositories.pan",
+        entityManagerFactoryRef = "panEntityManagerFactory", transactionManagerRef = "panTransactionManager")
 @Configuration
 public class PanDatabaseConfiguration {
-
     @Bean
     @Primary
     @ConfigurationProperties("spring.pan.datasource")
-    public DataSourceProperties panDataSourceProperties(){
+    public DataSourceProperties panDataSourceProperties() {
         return new DataSourceProperties();
     }
 
+    @Primary
     @Bean
-    public DataSource panDataSource(@Qualifier("panDataSourceProperties") DataSourceProperties panDataSourceProperties){
+    public DataSource panDataSource(@Qualifier("panDataSourceProperties") DataSourceProperties panDataSourceProperties) {
         return panDataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
     }
 
-
+    @Primary
     @Bean
-    public LocalContainerEntityManagerFactoryBean panEntityManagerFactory
-            (@Qualifier("panDataSource") DataSource panDataSource, EntityManagerFactoryBuilder builder) {
+    public LocalContainerEntityManagerFactoryBean panEntityManagerFactory(
+            @Qualifier("panDataSource") DataSource panDataSource,
+            EntityManagerFactoryBuilder builder) {
         return builder.dataSource(panDataSource)
                 .packages(CreditCardPAN.class)
                 .persistenceUnit("pan")
                 .build();
     }
 
-
+    @Primary
     @Bean
     public PlatformTransactionManager panTransactionManager(
-            @Qualifier("panEntityManagerFactory") LocalContainerEntityManagerFactoryBean panEntityManagerFactory){
-        return new JpaTransactionManager((panEntityManagerFactory.getObject()));
+            @Qualifier("panEntityManagerFactory") LocalContainerEntityManagerFactoryBean panEntityManagerFactory) {
+        return new JpaTransactionManager(panEntityManagerFactory.getObject());
     }
-
-
 }

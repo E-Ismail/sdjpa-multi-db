@@ -18,9 +18,9 @@ import javax.sql.DataSource;
 /**
  * Created by EI on 11/12/2023
  */
-@EnableJpaRepositories(basePackages = "guruspringframework.sdjpamultidb.repositories.creditcard",entityManagerFactoryRef = "cardEntityManagerFactory", transactionManagerRef = "cardTransactionManager")
+@EnableJpaRepositories(basePackages = "guruspringframework.sdjpamultidb.repositories.creditcard",
+        entityManagerFactoryRef = "cardEntityManagerFactory", transactionManagerRef = "cardTransactionManager")
 @Configuration
-
 public class CardDatabaseConfiguration {
 
     @Bean
@@ -29,29 +29,27 @@ public class CardDatabaseConfiguration {
         return new DataSourceProperties();
     }
 
-
     @Bean
-    public DataSource cardDataSource(@Qualifier("cardDataSourceProperties") DataSourceProperties cardDataSourceProperties) {
+    public DataSource cardDataSource(@Qualifier("cardDataSourceProperties") DataSourceProperties cardDataSourceProperties){
         return cardDataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
     }
 
-
     @Bean
-    public LocalContainerEntityManagerFactoryBean cardEntityManagerFactory
-            (@Qualifier("cardDataSource") DataSource cardDataSource, EntityManagerFactoryBuilder builder) {
+    public LocalContainerEntityManagerFactoryBean cardEntityManagerFactory(
+            @Qualifier("cardDataSource") DataSource cardDataSource,
+            EntityManagerFactoryBuilder builder){
         return builder.dataSource(cardDataSource)
-                .packages(CreditCard.class) //ref between db entities and the actual connexion to the database
+                .packages(CreditCard.class)
                 .persistenceUnit("card")
                 .build();
     }
 
-
     @Bean
     public PlatformTransactionManager cardTransactionManager(
             @Qualifier("cardEntityManagerFactory") LocalContainerEntityManagerFactoryBean cardEntityManagerFactory){
-        return new JpaTransactionManager((cardEntityManagerFactory.getObject()));
-    }
 
+        return new JpaTransactionManager(cardEntityManagerFactory.getObject());
+    }
 }

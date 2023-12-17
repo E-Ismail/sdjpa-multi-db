@@ -18,8 +18,8 @@ import javax.sql.DataSource;
 /**
  * Created by EI on 11/12/2023
  */
-@EnableJpaRepositories(basePackages = "guruspringframework.sdjpamultidb.repositories.cardholder",entityManagerFactoryRef = "cardHolderEntityManagerFactory", transactionManagerRef = "cardHolderTransactionManager")
-
+@EnableJpaRepositories(basePackages = "guruspringframework.sdjpamultidb.repositories.cardholder",
+        entityManagerFactoryRef = "cardholderEntityManagerFactory", transactionManagerRef = "cardholderTransactionManager")
 @Configuration
 public class CardHolderDatabaseConfiguration {
 
@@ -30,24 +30,26 @@ public class CardHolderDatabaseConfiguration {
     }
 
     @Bean
-    public DataSource cardHolderDataSource(@Qualifier("cardHolderDataSourceProperties") DataSourceProperties cardHolderDataSourceProperties){
+    public DataSource cardholderDataSource(@Qualifier("cardHolderDataSourceProperties") DataSourceProperties cardHolderDataSourceProperties){
         return cardHolderDataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean cardHolderEntityManagerFactory
-            (@Qualifier("cardHolderDataSource") DataSource cardHolderDataSource, EntityManagerFactoryBuilder builder) {
-        return builder.dataSource(cardHolderDataSource)
+    public LocalContainerEntityManagerFactoryBean cardholderEntityManagerFactory(
+            @Qualifier("cardholderDataSource") DataSource cardholderDataSource,
+            EntityManagerFactoryBuilder builder){
+        return builder.dataSource(cardholderDataSource)
                 .packages(CreditCardHolder.class)
                 .persistenceUnit("cardholder")
                 .build();
     }
 
     @Bean
-    public PlatformTransactionManager cardHolderTransactionManager(
-            @Qualifier("cardHolderEntityManagerFactory") LocalContainerEntityManagerFactoryBean cardHolderEntityManagerFactory){
-        return new JpaTransactionManager((cardHolderEntityManagerFactory.getObject()));
+    public PlatformTransactionManager cardholderTransactionManager(
+            @Qualifier("cardholderEntityManagerFactory") LocalContainerEntityManagerFactoryBean cardholderEntityManagerFactory){
+
+        return new JpaTransactionManager(cardholderEntityManagerFactory.getObject());
     }
 }
