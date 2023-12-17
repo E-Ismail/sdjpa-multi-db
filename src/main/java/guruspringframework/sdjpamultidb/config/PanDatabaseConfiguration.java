@@ -1,7 +1,6 @@
 package guruspringframework.sdjpamultidb.config;
 
 import com.zaxxer.hikari.HikariDataSource;
-import guruspringframework.sdjpamultidb.domain.cardholder.CreditCardHolder;
 import guruspringframework.sdjpamultidb.domain.pan.CreditCardPAN;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -16,6 +15,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 
 /**
  * Created by EI on 11/12/2023
@@ -54,6 +54,6 @@ public class PanDatabaseConfiguration {
     @Bean
     public PlatformTransactionManager panTransactionManager(
             @Qualifier("panEntityManagerFactory") LocalContainerEntityManagerFactoryBean panEntityManagerFactory) {
-        return new JpaTransactionManager(panEntityManagerFactory.getObject());
+        return new JpaTransactionManager(Objects.requireNonNull(panEntityManagerFactory.getObject()));
     }
 }
