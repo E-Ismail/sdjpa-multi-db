@@ -24,7 +24,7 @@ public class FlywayConfiguration {
     @Bean(initMethod = "migrate")
     public Flyway flywayCard(@Qualifier("cardFlywayDataSourceProps") DataSourceProperties cardFlywayDataSourceProps) {
         return Flyway.configure().dataSource(cardFlywayDataSourceProps.getUrl(), cardFlywayDataSourceProps.getUsername(), cardFlywayDataSourceProps.getPassword())
-                .locations("classpath:/db/migrations/card")
+                .locations("classpath:/db/migration/card")
                 .load();
     }
 
@@ -37,7 +37,7 @@ public class FlywayConfiguration {
     @Bean(initMethod = "migrate")
     public Flyway flywayCardHolder(@Qualifier("cardHolderFlywayDataSourceProps") DataSourceProperties cardHolderFlywayDataSourceProps) {
         return Flyway.configure().dataSource(cardHolderFlywayDataSourceProps.getUrl(), cardHolderFlywayDataSourceProps.getUsername(), cardHolderFlywayDataSourceProps.getPassword())
-                .locations("classpath:/db/migrations/cardholder")
+                .locations("classpath:/db/migration/cardholder")
                 .load();
     }
 
@@ -51,7 +51,7 @@ public class FlywayConfiguration {
     @Bean(initMethod = "migrate")
     public Flyway flywayPan(@Qualifier("panFlywayDataSourceProps") DataSourceProperties panFlywayDataSourceProps) {
         return Flyway.configure().dataSource(panFlywayDataSourceProps.getUrl(), panFlywayDataSourceProps.getUsername(), panFlywayDataSourceProps.getPassword())
-                .locations("classpath:/db/migrations/pan")
+                .locations("classpath:/db/migration/pan")
                 .load();
     }
 }
