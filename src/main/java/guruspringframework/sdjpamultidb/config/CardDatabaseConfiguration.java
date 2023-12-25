@@ -15,6 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Objects;
+import java.util.Properties;
 
 /**
  * Created by EI on 11/12/2023
@@ -32,7 +33,7 @@ public class CardDatabaseConfiguration {
 
     @Bean
     @ConfigurationProperties("spring.card.datasource.hikari")
-    public DataSource cardDataSource(@Qualifier("cardDataSourceProperties") DataSourceProperties cardDataSourceProperties){
+    public DataSource cardDataSource(@Qualifier("cardDataSourceProperties") DataSourceProperties cardDataSourceProperties) {
         return cardDataSourceProperties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
@@ -41,16 +42,25 @@ public class CardDatabaseConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean cardEntityManagerFactory(
             @Qualifier("cardDataSource") DataSource cardDataSource,
-            EntityManagerFactoryBuilder builder){
-        return builder.dataSource(cardDataSource)
+            EntityManagerFactoryBuilder builder) {
+
+        Properties props = new Properties();
+        props.put("hibernate.hbm2ddl.auto", "validate");
+        props.put("hibernate.physical_naming_strategy",
+                "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy");
+
+        LocalContainerEntityManagerFactoryBean efb = builder.dataSource(cardDataSource)
                 .packages(CreditCard.class)
                 .persistenceUnit("card")
                 .build();
+        efb.setJpaProperties(props);
+
+        return efb;
     }
 
     @Bean
     public PlatformTransactionManager cardTransactionManager(
-            @Qualifier("cardEntityManagerFactory") LocalContainerEntityManagerFactoryBean cardEntityManagerFactory){
+            @Qualifier("cardEntityManagerFactory") LocalContainerEntityManagerFactoryBean cardEntityManagerFactory) {
 
         return new JpaTransactionManager(Objects.requireNonNull(cardEntityManagerFactory.getObject()));
     }
